@@ -71,7 +71,7 @@ class App extends Component {
     }
 
     axios
-      .post("http://localhost:8000/upload", data, {
+      .post("http://localhost:8080/upload", data, {
         onUploadProgress: (ProgressEvent) => {
           this.setState({
             loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
@@ -101,16 +101,20 @@ class App extends Component {
 
   onDownload = (event)=> {
     axios
-    .post("http://localhost:8000/download", {
-      onUploadProgress: (ProgressEvent) => {
-        this.setState({
-          loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
-        });
-      },
+    .get("http://localhost:8080/download/"+this.state.key, {
+      
     })
-    .then((res) => {
+    .then((response) => {
       toast.success("download success");
+      const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
+      response.blob().then(blob => {
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
     })
+  })
     .catch((err) => {
       toast.error("download fail");
     });
