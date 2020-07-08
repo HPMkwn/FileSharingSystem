@@ -116,7 +116,7 @@ class App extends Component {
     });
   }
 
-  onKeyChange = (event) => {
+  onKeyChange = (event) => {  
     console.log(event.target.value);
     this.setState({
       key : event.target.value
