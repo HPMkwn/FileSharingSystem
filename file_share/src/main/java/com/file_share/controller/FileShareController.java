@@ -26,6 +26,9 @@ public class FileShareController {
         }
         Doc doc = null;
         doc = new Doc(StringUtils.cleanPath(file.getOriginalFilename()),file.getBytes());
+        while(docRepository.existsById(doc.getKey())){
+            doc.setKey();
+        }
         docRepository.save(doc);
         return ResponseEntity.ok(doc.getKey());
     }

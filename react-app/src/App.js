@@ -9,6 +9,7 @@ class App extends Component {
     this.state = {
       seletedFile: null,
       key : "",
+      keys : [],
       isUploaded : false
     };
   }
@@ -21,8 +22,8 @@ class App extends Component {
   // 3:)Sending an image file that is too large
   maxSelectFile = (event) => {
     let files = event.target.files; // create file object
-    if (files.length > 3) {
-      const msg = "Only 3 images can be uploaded at a time";
+    if (files.length > 1) {
+      const msg = "Only one imagep can be uploaded at a time";
       event.target.value = null; // discard selected file
       console.log(msg);
       toast.error(msg);
@@ -82,7 +83,7 @@ class App extends Component {
       .then((res) => {
         toast.success("upload success");    
         console.log(res.data);
-        this.setState({isUploaded:true,key:res.data})
+        this.setState({isUploaded:true,key:this.state.keys.push(res.data)})
         // this.state({isUploaded:true , ...this.state})
       })
       .catch((err) => {
@@ -137,12 +138,16 @@ class App extends Component {
   }
 
   render() {
-    let keyData;
-    if(this.state.isUploaded){
-      keyData = <div> key : {this.state.key}</div>
-    }
+    
 
     return (
+      <div>
+      <nav class="navbar navbar-light bg-light">
+        <h1 class="navbar-brand" href="#">
+          File_Share
+        </h1>
+      </nav>
+      
       <div>
         <div className="container">
           <div className="row">
@@ -152,7 +157,7 @@ class App extends Component {
                   <div className="form-group">
                     <ToastContainer />
                   </div>
-                  <label> Upload Your files</label>
+                  <label>Upload files. get a key. share :) </label>
                   <input type="file" name="file" className="form-control" multiple onChange={this.onChangeHandler}/>
                   <button type="button" className="btn btn-success btn-block" onClick={this.onClickHandler}>Upload</button>
                   <div name="form-group">
@@ -160,13 +165,15 @@ class App extends Component {
                   </div>
                   <hr/>
                   <div>
-                    {keyData}
+                    <ul>
+                      {this.state.keys.map(item => <li key={item}> key : {item} </li>)}
+                    </ul>
                   </div>
                 </div>
               </form>
             </div>
 
-            <div className="col-md-6">
+            <div className="col-md-6 pt-5">
                 <div className="form-group color">
                   <div></div>
                   <label>Enter the key : </label>
@@ -176,6 +183,7 @@ class App extends Component {
             </div>
           </div>
         </div>
+      </div>
       </div>
     );
   }

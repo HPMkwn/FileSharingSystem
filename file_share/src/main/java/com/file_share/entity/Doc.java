@@ -46,6 +46,8 @@ public class Doc {
         return key;
     }
 
+    public void setKey() { this.key = generateRandomKey(); }
+
     public byte[] getFile() {
         return file;
     }
