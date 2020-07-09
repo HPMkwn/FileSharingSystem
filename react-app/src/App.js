@@ -8,7 +8,8 @@ class App extends Component {
     super(props);
     this.state = {
       seletedFile: null,
-      key : ""
+      key : "",
+      isUploaded : false
     };
   }
 
@@ -79,7 +80,10 @@ class App extends Component {
         },
       })
       .then((res) => {
-        toast.success("upload success");
+        toast.success("upload success");    
+        console.log(res.data);
+        this.setState({isUploaded:true,key:res.data})
+        // this.state({isUploaded:true , ...this.state})
       })
       .catch((err) => {
         toast.error("upload fail");
@@ -100,22 +104,26 @@ class App extends Component {
   };
 
   onDownload = (event)=> {
+    console.log("hello there");
+    
     axios
-    .get("http://localhost:8080/download/"+this.state.key, {
-      
+    .get(`http://localhost:8080/download/${this.state.key}`, {
+      responseType: 'arraybuffer',
     })
     .then((response) => {
+      console.log(response)
       toast.success("download success");
-      const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
-      response.blob().then(blob => {
-        let url = window.URL.createObjectURL(blob);
-        let a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-    })
+      console.log("This also working");
+      window.open(response.config.url);
+        // const type = response.headers['content-type']
+        // const blob = new Blob([response.data], { type: type, encoding: 'UTF-8' })
+        // const link = document.createElement('a')
+        // link.href = window.URL.createObjectURL(blob)
+        // link.download = "download";
+        // link.click();
   })
     .catch((err) => {
+      console.log(err);
       toast.error("download fail");
     });
   }
@@ -129,6 +137,11 @@ class App extends Component {
   }
 
   render() {
+    let keyData;
+    if(this.state.isUploaded){
+      keyData = <div> key : {this.state.key}</div>
+    }
+
     return (
       <div>
         <div className="container">
@@ -145,22 +158,21 @@ class App extends Component {
                   <div name="form-group">
                     <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded, 2)}%</Progress>
                   </div>
+                  <hr/>
+                  <div>
+                    {keyData}
+                  </div>
                 </div>
               </form>
             </div>
 
             <div className="col-md-6">
-              <form method="post" action="#" id="#">
-                <div className="form-group files color">
+                <div className="form-group color">
                   <div></div>
                   <label>Enter the key : </label>
-                  <input type="text" name="key" onChange={this.onDownload} />
-                  <button className="btn btn-success btn-block"> Download </button>
-                  <div name="form-group">
-                    <Progress max="100" color="success" value={this.state.loaded} >{Math.round(this.state.loaded, 2)}%</Progress>
-                  </div>
+                  <input type="text" name="key" onChange={this.onKeyChange} />
+                  <button className="btn btn-success btn-block" onClick = {this.onDownload}> Download </button>
                 </div>
-              </form>
             </div>
           </div>
         </div>

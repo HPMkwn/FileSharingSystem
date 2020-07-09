@@ -40,4 +40,8 @@ public class FileShareController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
                 .body(doc.getFile());
     }
+    @PostMapping("/")
+    public String HelloString(){
+        return "Hello herat";
+    }
 }
